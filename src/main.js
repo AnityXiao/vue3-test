@@ -1,96 +1,27 @@
-import { createApp } from 'vue'
-import { ElButton, ElContainer, ElAside, ElHeader, ElMain, ElFooter, ElMenu, ElSubmenu, ElMenuItemGroup, ElMenuItem, ElForm, ElFormItem, ElInput, ElPopover, ElTag, ElCard, ElTable, ElTableColumn, ElPagination, ElDialog, ElPopconfirm, ElUpload, ElLoading, ElSelect, ElOption, ElRadioGroup, ElRadio, ElCascader, ElCheckbox, ElInputNumber } from 'element-plus'
-import * as Sentry from "@sentry/browser";
-import { Integrations } from "@sentry/tracing";
+/*
+ * @Author: your name
+ * @Date: 2022-01-19 15:28:16
+ * @LastEditTime: 2022-01-26 14:01:13
+ * @LastEditors: Please set LastEditors
+ * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @FilePath: /my-project/src/main.js
+ */
+import {
+    createApp
+} from 'vue'
 import App from './App.vue'
-import router from './router/index'
+import router from './router'
+import store from './store'
+// 导入所有element icon图标
+import * as ElIconModules from '@element-plus/icons-vue';
+// import animated from 'animate.css'
+import 'animate.css/animate.min.css'
+// .use(animated)
 
-// import 'element-plus/lib/theme-chalk/index.css'
+const app=createApp(App)
+// 全局注册element-plus icon图标组件
+Object.keys(ElIconModules).forEach((key) => {
+    app.component(key, ElIconModules[key]);
+});
 
-// 修改后的主题样式必须放在最后面
-import '../theme/index.css'
-
-const orderStatus = {
-  0: '待支付',
-  1: '已支付',
-  2: '配货完成',
-  3: '出库成功',
-  4: '交易成功',
-  '-1': '手动关闭',
-  '-2': '超时关闭',
-  '-3': '商家关闭'
-}
-
-const app = createApp(App)
-// 全局过滤器
-app.config.globalProperties.$filters = {
-  orderMap(status) {
-    return orderStatus[status] || '未知状态'
-  },
-  prefix(url) {
-    if (url && url.startsWith('http')) {
-      return url
-    } else {
-      url = `http://backend-api-02.newbee.ltd${url}`
-      return url
-    }
-  },
-  resetImgUrl(imgObj, imgSrc, maxErrorNum) {  
-    if (maxErrorNum > 0) { 
-      imgObj.onerror = function() {  
-        resetImgUrl(imgObj, imgSrc, maxErrorNum - 1) 
-      }
-      setTimeout(function() {  
-        imgObj.src = imgSrc  
-      }, 500)
-    } else {  
-      imgObj.onerror = null  
-      imgObj.src = imgSrc
-    }  
-  }  
-}
-
-app.use(router)
-
-app.use(ElButton)
-    .use(ElContainer)
-    .use(ElAside)
-    .use(ElHeader)
-    .use(ElMain)
-    .use(ElFooter)
-    .use(ElMenu)
-    .use(ElSubmenu)
-    .use(ElMenuItemGroup)
-    .use(ElMenuItem)
-    .use(ElForm)
-    .use(ElFormItem)
-    .use(ElInput)
-    .use(ElPopover)
-    .use(ElTag)
-    .use(ElCard)
-    .use(ElTable)
-    .use(ElTableColumn)
-    .use(ElPagination)
-    .use(ElDialog)
-    .use(ElPopconfirm)
-    .use(ElUpload)
-    .use(ElLoading)
-    .use(ElSelect)
-    .use(ElOption)
-    .use(ElRadioGroup)
-    .use(ElRadio)
-    .use(ElCascader)
-    .use(ElCheckbox)
-    .use(ElInputNumber)
-
-    Sentry.init({
-      dsn: "https://f866b695d21d467ba523f1adf14e0a24@o584908.ingest.sentry.io/5737358",
-      integrations: [new Integrations.BrowserTracing()],
-    
-      // Set tracesSampleRate to 1.0 to capture 100%
-      // of transactions for performance monitoring.
-      // We recommend adjusting this value in production
-      tracesSampleRate: 1.0,
-    });
-
-app.mount('#app')
+app.use(store).use(router).mount('#app')

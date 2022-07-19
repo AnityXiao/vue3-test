@@ -1,95 +1,95 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+/*
+ * @Descripttion:
+ * @version:
+ * @Author: xiao
+ * @Date: 2022-01-12 17:20:28
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2022-01-25 16:49:53
+ */
+import {
+    createRouter,
+    createWebHashHistory,
+} from "vue-router";
+import Normal from '../views/normal/index.vue'
+import store from '../store/index.js'
+import { toRaw } from '@vue/reactivity'
+
+/**
+ * 路由相关属性说明
+ *hidden:设置为true，不会显示在侧边栏中（默认为false)
+ *meta{
+ *  title:xxx,设置sideBars侧边栏名称
+ * icon:xxx,设置sideBars侧边栏图标
+ * noCache:true,当为true时，不缓存该路由页面(默认为false)
+ * roles:[],设置可查看该菜单权限的角色
+ * breadList:[],定义路径结构，专用于面包屑导航
+ */
+export
+const routes = [{
+        path: '/',
+        redirect: '/index',
+    }, {
+        path: '/index',
+        name: 'Index',
+        component: () => import('../components/HelloWorld.vue'),
+        meta: {
+            title: '所爱隔山海',
+            roles: ['one'],
+            icon:'Cherry'
+        }
+    }, {
+        path: '/normal',
+        name: 'Normal',
+        component: Normal,
+        meta: {
+            title: '山海亦可平',
+            roles: ['one'],
+            icon:'Fries'
+        }
+    },
+    {
+        path: '/test',
+        name: 'Test',
+        component: () => import('../views/test/index.vue'),
+        meta: {
+            title: '海有舟可渡',
+            roles: ['one'],
+            icon:'Grape'
+        }
+    }, {
+        path: '/login',
+        name: 'Login',
+        component: () => import('../views/login/index.vue'),
+        meta: {
+            title: '山有路可行',
+            roles: ['one'],
+            icon:'Pear'
+        }
+    }, {
+        path: '/layout',
+        name: 'Layout',
+        component: () => import('../components/layout/index.vue')
+    }
+]
+
+
 
 const router = createRouter({
-  history: createWebHashHistory(), // hash模式：createWebHashHistory，history模式：createWebHistory
-  routes: [
-    {
-      path: '/',
-      redirect: '/introduce'
-    },
-    {
-      path: '/introduce',
-      name: 'introduce',
-      component: () => import(/* webpackChunkName: "introduce" */ '../views/Introduce.vue')
-    },
-    {
-      path: '/dashboard',
-      name: 'dashboard',
-      component: () => import(/* webpackChunkName: "dashboard" */ '../views/Index.vue')
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: () => import(/* webpackChunkName: "login" */ '../views/Login.vue')
-    },
-    {
-      path: '/add',
-      name: 'add',
-      component: () => import(/* webpackChunkName: "add" */ '../views/AddGood.vue')
-    },
-    {
-      path: '/swiper',
-      name: 'swiper',
-      component: () => import(/* webpackChunkName: "swiper" */ '../views/Swiper.vue')
-    },
-    {
-      path: '/hot',
-      name: 'hot',
-      component: () => import(/* webpackChunkName: "hot" */ '../views/IndexConfig.vue')
-    },
-    {
-      path: '/new',
-      name: 'new',
-      component: () => import(/* webpackChunkName: "new" */ '../views/IndexConfig.vue')
-    },
-    {
-      path: '/recommend',
-      name: 'recommend',
-      component: () => import(/* webpackChunkName: "recommend" */ '../views/IndexConfig.vue')
-    },
-    {
-      path: '/category',
-      name: 'category',
-      component: () => import(/* webpackChunkName: "category" */ '../views/Category.vue'),
-      children: [
-        {
-          path: '/category/level2',
-          name: 'level2',
-          component: () => import(/* webpackChunkName: "level2" */ '../views/Category.vue'),
-        },
-        {
-          path: '/category/level3',
-          name: 'level3',
-          component: () => import(/* webpackChunkName: "level3" */ '../views/Category.vue'),
-        }
-      ]
-    },
-    {
-      path: '/good',
-      name: 'good',
-      component: () => import(/* webpackChunkName: "new" */ '../views/Good.vue')
-    },
-    {
-      path: '/guest',
-      name: 'guest',
-      component: () => import(/* webpackChunkName: "guest" */ '../views/Guest.vue')
-    },
-    {
-      path: '/order',
-      name: 'order',
-      component: () => import(/* webpackChunkName: "order" */ '../views/Order.vue')
-    },
-    {
-      path: '/order_detail',
-      name: 'order_detail',
-      component: () => import(/* webpackChunkName: "order_detail" */ '../views/OrderDetail.vue')
-    },
-    {
-      path: '/account',
-      name: 'account',
-      component: () => import(/* webpackChunkName: "account" */ '../views/Account.vue')
+    history: createWebHashHistory(),
+    routes
+})
+
+
+router.beforeEach(async (to, from, next) => {
+    // console.log(to, from)
+    if (to.path == '/layout') {
+        var roles = ['one']
+        const addRoutes = await store.dispatch('layout/getAsyncRoutes', roles)
+        // console.log(addRoutes)
+        next()
+    } else {
+        next()
     }
-  ]
 })
 
 export default router
